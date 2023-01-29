@@ -77,3 +77,9 @@ updates:
     directory: "/labs/unicorn-location-api/final/unicorn-location-api-final"
     schedule:
       interval: "weekly"
+
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily

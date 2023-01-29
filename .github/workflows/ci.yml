@@ -6,25 +6,38 @@ on:
   
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   cfn-nag:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: stelligent/cfn_nag@master
+    - name: Harden Runner
+      uses: step-security/harden-runner@18bf8ad2ca49c14cbb28b91346d626ccfb00c518 # v2.1.0
+      with:
+        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+    - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+    - uses: stelligent/cfn_nag@8b5f03da74202ba323a145e9d037ddce6cab9dec # master
       with:
         input_path: labs/unicorn-location-api/template.yaml
-    - uses: stelligent/cfn_nag@master
+    - uses: stelligent/cfn_nag@8b5f03da74202ba323a145e9d037ddce6cab9dec # master
       with:
         input_path: labs/unicorn-location-api/final/unicorn-location-api-final/template.yaml
-    - uses: stelligent/cfn_nag@master
+    - uses: stelligent/cfn_nag@8b5f03da74202ba323a145e9d037ddce6cab9dec # master
       with:
         input_path: labs/unicorn-stock-broker/template.yaml
 
   build-unicorn-store:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Harden Runner
+        uses: step-security/harden-runner@18bf8ad2ca49c14cbb28b91346d626ccfb00c518 # v2.1.0
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: mvn db-setup
         run: ./mvnw package -f infrastructure/db-setup/pom.xml
         working-directory: ./labs/unicorn-store
@@ -52,7 +65,12 @@ jobs:
   build-unicorn-location-api:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@18bf8ad2ca49c14cbb28b91346d626ccfb00c518 # v2.1.0
+      with:
+        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+    - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
     - name: mvn initial
       run: mvn package
       working-directory: ./labs/unicorn-location-api/UnicornLocationFunction
@@ -63,7 +81,12 @@ jobs:
   build-unicorn-stock-broker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Harden Runner
+        uses: step-security/harden-runner@18bf8ad2ca49c14cbb28b91346d626ccfb00c518 # v2.1.0
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: mvn build
         run: mvn package
         working-directory: ./labs/unicorn-stock-broker
